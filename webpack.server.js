@@ -1,6 +1,7 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   target: 'node',
@@ -9,7 +10,7 @@ module.exports = {
     __dirname: false,
     __filename: false,
   },
-  devtool: 'cheap-eval-source-map',
+  // devtool: 'cheap-eval-source-map',
   entry: [
     './server.js'
   ],
@@ -17,27 +18,18 @@ module.exports = {
     filename: 'server.js',
     path: resolve(__dirname, './dist'),
   },
-  // context: resolve(__dirname, '.'),
-  //resolve: {
-    // modules: [resolve(__dirname, './node_modules')],
-    //moduleExtensions: ['-loader'],
-    //extensions: ['.jsx', '.js', '.json'],
-  //},
-  /*
-  resolveLoader: {
-    // modules: [resolve(__dirname, './node_modules')],
-    // modules: [resolve(__dirname, '../node_modules')],
-    // modules: ['../node_modules'],
-  },
-  */
+  // context: resolve(__dirname, './src'),
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.node'],
+    modules: [
+      resolve('./src'),
+    ],
+    extensions: ['.js', '.jsx', '.json', '.node', '.less'],
   },
-  watch: true,
+  // watch: true,
   plugins: [
     // new webpack.HotModuleReplacementPlugin(),
-    new webpack.optimize.AggressiveMergingPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
+    // new webpack.optimize.AggressiveMergingPlugin(),
+    // new webpack.NoEmitOnErrorsPlugin(),
   ],
   module: {
     noParse: /aws\-sdk/,
@@ -50,7 +42,8 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              presets: [['es2015', { modules: false }], 'react', 'stage-2'],
+              presets: [['es2015', { modules: false }], 'react', 'stage-0'],
+              plugins: ['transform-decorators-legacy'],
             },
           },
         ],
@@ -58,12 +51,13 @@ module.exports = {
       {
         test: /\.jsx?/,
         exclude: /node_modules/,
-        //include: [resolve(__dirname, './src')],
+        include: [resolve(__dirname, './src')],
         use: [
           {
             loader: 'babel-loader',
             options: {
-              presets: [['es2015', { modules: false }], 'react', 'stage-2'],
+              presets: [['es2015', { modules: false }], 'react', 'stage-0'],
+              plugins: ['transform-decorators-legacy'],
             },
           },
         ],
@@ -75,7 +69,15 @@ module.exports = {
       {
         test: /\.node$/,
         use: 'node-loader'
-      }
+      },
+      {
+        test: /\.less$/,
+        use: [
+          'isomorphic-style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'less-loader'
+        ],
+      },
     ],
   },
 };

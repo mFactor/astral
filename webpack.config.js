@@ -1,13 +1,19 @@
 const { resolve, join } = require('path');
 const webpack = require('webpack');
-// const babel
 
+/**
+ * Client-side webpack for development. Runs in-memory compilation.
+ *
+ * There has been continous issues with react-hot-loader, until they are
+ * resolved react-hmre is a better canidate.
+ */
 module.exports = {
   target: 'web',
-  devtool: 'cheap-eval-source-map',
+  // devtool: 'cheap-eval-source-map',
   entry: [
     // 'react-hot-loader/patch',
-    'webpack-hot-middleware/client?path=/__webpack_hmr',
+    'webpack-hot-middleware/client?path=/__webpack_hmr&overlay=false',
+    // 'webpack/hot/only-dev-server',
     './render.jsx',
   ],
   output: {
@@ -17,38 +23,17 @@ module.exports = {
   },
   context: resolve(__dirname, '../src'),
   resolve: {
-    //modules: [resolve(__dirname, 'node_modules')],
-    // moduleExtensions: ['-loader'],
-    extensions: ['.jsx', '.js', '.json'],
+    modules: [
+      resolve('./src'),
+      resolve('./node_modules')
+    ],
+    extensions: ['.jsx', '.js', '.json', '.less'],
   },
-  /*
-  resolveLoader: {
-    modules: [resolve(__dirname, '../node_modules')],
-    moduleExtensions: ['-loader'],
-    extensions: ['.jsx', '.js', '.json'],
-    // modules: [resolve(__dirname, '../node_modules')],
-    // modules: ['../node_modules'],
-  },
-  */
   plugins: [
     //new webpack.ContextReplacementPlugin(/load-runner/, /^\.\//),
     new webpack.HotModuleReplacementPlugin(),
     // new webpack.optimize.AggressiveMergingPlugin(),
   ],
-
-  /*
-  devServer: {
-    hot: true,
-    // enable HMR on the server
-
-    contentBase: resolve(__dirname, 'static'),
-    // match the output path
-
-    publicPath: resolve(__dirname, '/'),
-    // match the output `publicPath`
-  },
-  */
-
   module: {
     rules: [
       {
@@ -60,8 +45,8 @@ module.exports = {
             // enforce: 'pre',
             loader: 'babel-loader',
             options: {
-              presets: ['es2015', 'react', 'stage-2', 'react-hmre'],
-              // plugins: ['react-hmre']
+              presets: ['es2015', 'react', 'stage-0', 'react-hmre'],
+              plugins: ['transform-decorators-legacy'],
             },
           },
         ],
@@ -75,8 +60,8 @@ module.exports = {
             // enforce: 'pre',
             loader: 'babel-loader',
             options: {
-              presets: ['es2015', 'react', 'stage-2', 'react-hmre'],
-              // plugins: ['react-hmre']
+              presets: ['es2015', 'react', 'stage-0', 'react-hmre'],
+              plugins: ['transform-decorators-legacy'],
             },
           },
         ],
@@ -84,9 +69,15 @@ module.exports = {
       {
         test: /\.json$/,
         use: 'json-loader'
-      }
+      },
+      {
+        test: /\.less$/,
+        use: [
+          'isomorphic-style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'less-loader'
+        ],
+      },
     ],
   },
 };
-
-// export default config;

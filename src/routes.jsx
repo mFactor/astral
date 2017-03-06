@@ -1,9 +1,15 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
-import App from './app/app.jsx';
+import Base from './base/views/base.jsx';
+import AppRouter from './app/router.jsx';
 
+/**
+ * Global application routes, each module must be imported here to expose to
+ * the URL namespace
+ */
 const routes = (
-  <Route name='app' component={App} path='/'>
+  <Route name='base' component={Base}>
+    {AppRouter}
   </Route>
 );
 

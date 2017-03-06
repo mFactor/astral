@@ -2,11 +2,11 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Router, browserHistory } from 'react-router';
 //import { Provider } from 'react-redux';
-import { AppContainer } from 'react-hot-loader';
+// import { AppContainer } from 'react-hot-loader';
 // import { createStore } from 'redux';
 // import reducers from './reducers.jsx';
-import Root from './root';
 import routes from './routes';
+import IsoStyle from './base/components/iso_style';
 /*
 import promiseMiddleware from 'lib/promiseMiddleware';
 import immutifyState from 'lib/immutifyState';
@@ -38,9 +38,9 @@ const moduleLoad = (Component) => {
 
 const moduleLoad = (routes) => {
   render(
-    <Router history={browserHistory}>
-      {routes}
-    </Router>,
+    <IsoStyle onInsertCss={styles => styles._insertCss()}>
+      <Router routes={routes} history={browserHistory} />
+    </IsoStyle>,
     document.getElementById('app-entry')
   );
 };
@@ -57,11 +57,8 @@ render(
 */
 
 // Hot Module Replacement API
-/*
+
 if (module.hot) {
   console.log("Hot module reloading...");
-  module.hot.accept('./root', () => {
-    moduleLoad(routes);
-  });
+  module.hot.accept();
 }
-*/
