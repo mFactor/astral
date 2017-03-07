@@ -1,34 +1,21 @@
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack'
-//import webpackDevMiddleware from 'webpack-dev-middleware';
-// import webpackHotMiddleware from 'webpack-hot-middleware';
+/**
+ * Entry point for Node.
+ * TODO: Remove hard references in rootTemplate, prep for production
+ */
+import { join } from 'path';
 import express from 'express';
 import React from 'react';
 import { renderToString } from 'react-dom/server'
 import { RouterContext, match, createMemoryHistory } from 'react-router';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
 import reactRoutes from './src/routes.jsx';
+import globalReducers from './src/reducers.jsx';
 import client from './webpack.config.js';
 import IsoStyle from './src/base/components/iso_style.jsx';
 
-// const compiler = webpack(client);
 const app = express();
-
-app.use(express.static(path.join(__dirname, 'static')));
-
-/*
-app.use(webpackDevMiddleware(compiler, {
-  serverSideRender: true,
-  hot: true,
-  stats: {
-    colors: true,
-  }
-}));
-
-app.use(webpackHotMiddleware(compiler, {
-  path: '/__webpack_hmr'
-}));
-*/
+app.use(express.static(join(__dirname, 'static')));
 
 app.use((req, res) => {
   const history = createMemoryHistory(req.path);
@@ -38,18 +25,8 @@ app.use((req, res) => {
     location: req.url
   };
   const css = [];
-  /*
-  const reducer = combineReducers(reducers);
-  const store = applyMiddleware(promiseMiddleware)(createStore)(reducer);
-  let assetChunks = res.locals.webpackStats.toJson().assetsByChunkName.main;
-  if (assetChunks.constructor !== Array) {
-    assetChunks = Array.of(assetChunks);
-  }
-  assetChunks = assetChunks.filter(path => path.endsWith('.js'))
-                           .map(path => `<script type="application/javascript" src="${path}"></script>`);
-  console.log(assetChunks);
-   */
-  // const assetChunks = res.locals.webpackStats.toJson().assetsByChunkName.main;
+  const storeState = {};
+  const store = createStore(globalReducers, storeState);
   match(routerParams, (err, redirectLocation, renderProps) => {
     if (err) {
       console.error(err);
@@ -58,35 +35,21 @@ app.use((req, res) => {
     if (!renderProps) return res.status(404).end('Not found');
 
     function renderView() {
-      /*
-      const InitialView = (
-        React.createElement(Provider, { },
-                            React.createElement(RouterContext, props, null)));
-      */
       const rootView = React.createElement(RouterContext, renderProps, null);
       const rootStyle = React.createElement(IsoStyle, {
         onInsertCss: (styles) => { css.push(styles._getCss()) }
       }, rootView);
-      // console.log(assetsByChunkName);
-      // console.log(renderProps);
-      /*
-      const InitialView = (
-        <Provider>
-         <RoutingContext {...renderProps} />
-        </Provider>
-      );
-       */
+      const rootRedux = React.createElement(Provider, store, rootStyle);
       const rootComponent = renderToString(rootStyle);
-      //const initialState = store.getState();
-      const initiaLState = null;
-      const rootTemplate = `
+      const rootState = JSON.stringify(store.getState());
+      const template = `
       <!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
           <title>Astral | Demo</title>
           <script>
-            window.__INITIAL_STATE__ = 1;
+            window.__ROOT_STATE__ = ${rootState};
           </script>
           <style>${css.join('')}</style>
         </head>
@@ -96,7 +59,7 @@ app.use((req, res) => {
         </body>
       </html>
       `;
-      return rootTemplate;
+      return template;
     }
     res.send(renderView());
   });

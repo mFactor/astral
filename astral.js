@@ -5,9 +5,18 @@ const server = require('./webpack.server.js');
 const client = require('./webpack.config.js');
 
 const DEV_PORT = 3001;
+process.env.NODE_ENV = 'development';
 
-watchServer(server);
-watchClient(client);
+/**
+ * Main
+ * TODO: Set up for production
+ */
+(() => {
+  if (process.env.NODE_ENV === 'development') {
+    watchServer(server);
+    watchClient(client);
+  }
+})();
 
 /**
  * Astral server manager
@@ -23,9 +32,9 @@ function watchServer(server) {
     aggregateTimeout: 300,
     poll: undefined
   }, (err, stats) => {
-    // Check err
     if (err) {
-      console.log('Server bundling error has occured');
+      // console.log('Server bundling error has occured');
+      throw new Error('Server bundling error has occured');
     }
     // clear bundle imports
     clearImportCache(bundlePath);
@@ -76,7 +85,6 @@ function watchClient(client) {
       colors: true,
     },
   };
-  console.log(opts);
   const devServer = new WebpackDevServer(compiler, opts);
   devServer.listen(DEV_PORT, 'localhost', console.log('Dev server listening on ' + DEV_PORT));
 }
@@ -85,7 +93,6 @@ function watchClient(client) {
  * Express HTTP server manager
  */
 function httpInit(bundlePath) {
-  console.log(bundlePath);
   let httpServer;
   const sockets = new Map();
   let nextSocket = 0;

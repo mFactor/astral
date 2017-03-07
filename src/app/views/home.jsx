@@ -15,13 +15,12 @@ export default class Home extends React.Component {
     super(props);
     this.state = {
     };
-    console.log('test son');
   }
 
   render() {
     return (
       <div id='home-view'>
-        Some home shit or something likes thats
+        Some home shit or something likes thatsss
       </div>
     );
   }

@@ -18,7 +18,6 @@ export default class Base extends React.Component {
   render() {
     return (
       <div id='base-view'>
-        <h1>bss</h1>
         {this.props.children}
       </div>
     );
