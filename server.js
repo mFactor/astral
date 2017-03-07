@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import webpack from 'webpack'
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
+//import webpackDevMiddleware from 'webpack-dev-middleware';
+// import webpackHotMiddleware from 'webpack-hot-middleware';
 import express from 'express';
 import React from 'react';
 import { renderToString } from 'react-dom/server'
@@ -11,11 +11,12 @@ import reactRoutes from './src/routes.jsx';
 import client from './webpack.config.js';
 import IsoStyle from './src/base/components/iso_style.jsx';
 
-const compiler = webpack(client);
+// const compiler = webpack(client);
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'static')));
 
+/*
 app.use(webpackDevMiddleware(compiler, {
   serverSideRender: true,
   hot: true,
@@ -27,6 +28,7 @@ app.use(webpackDevMiddleware(compiler, {
 app.use(webpackHotMiddleware(compiler, {
   path: '/__webpack_hmr'
 }));
+*/
 
 app.use((req, res) => {
   const history = createMemoryHistory(req.path);
@@ -47,14 +49,14 @@ app.use((req, res) => {
                            .map(path => `<script type="application/javascript" src="${path}"></script>`);
   console.log(assetChunks);
    */
-  const assetChunks = res.locals.webpackStats.toJson().assetsByChunkName.main;
+  // const assetChunks = res.locals.webpackStats.toJson().assetsByChunkName.main;
   match(routerParams, (err, redirectLocation, renderProps) => {
     if (err) {
       console.error(err);
       return res.status(500).end('Internal server error');
     }
     if (!renderProps) return res.status(404).end('Not found');
-    console.log('render');
+
     function renderView() {
       /*
       const InitialView = (
@@ -90,7 +92,7 @@ app.use((req, res) => {
         </head>
         <body>
           <div id="app-entry">${rootComponent}</div>
-          ${assetChunks}
+          <script src="http://localhost:3001/render.bundle.js"></script>
         </body>
       </html>
       `;
@@ -105,4 +107,4 @@ const httpServer = app.listen(PORT, () => {
   console.log('Server listening on: ' + PORT);
 });
 
-// export default httpServer;
+export { httpServer };

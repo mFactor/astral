@@ -1,5 +1,6 @@
 const { resolve, join } = require('path');
 const webpack = require('webpack');
+const devUrl = 'http://localhost:3001';
 
 /**
  * Client-side webpack for development. Runs in-memory compilation.
@@ -12,16 +13,17 @@ module.exports = {
   // devtool: 'cheap-eval-source-map',
   entry: [
     // 'react-hot-loader/patch',
-    'webpack-hot-middleware/client?path=/__webpack_hmr&overlay=false',
-    // 'webpack/hot/only-dev-server',
+    // 'webpack-hot-middleware/client?dynamicPublicPath=true&' + devUrl,
+    'webpack-dev-server/client?' + devUrl,
+    'webpack/hot/only-dev-server',
     './render.jsx',
   ],
   output: {
     filename: 'render.bundle.js',
-    path: resolve(__dirname, '../dist/static'),
-    publicPath: '/'
+    path: resolve(__dirname, './dist/static'),
+    publicPath: devUrl + '/'
   },
-  context: resolve(__dirname, '../src'),
+  context: resolve(__dirname, './src'),
   resolve: {
     modules: [
       resolve('./src'),

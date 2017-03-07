@@ -17,6 +17,7 @@ module.exports = {
   output: {
     filename: 'server.js',
     path: resolve(__dirname, './dist'),
+    libraryTarget: 'commonjs2' // Important
   },
   // context: resolve(__dirname, './src'),
   resolve: {
