@@ -85,6 +85,7 @@ function watchClient(client) {
       colors: true,
     },
   };
+  // let config = require(bundlePath).config;
   const devServer = new WebpackDevServer(compiler, opts);
   devServer.listen(DEV_PORT, 'localhost', console.log('Dev server listening on ' + DEV_PORT));
 }

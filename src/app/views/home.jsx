@@ -20,7 +20,7 @@ export default class Home extends React.Component {
   render() {
     return (
       <div id='home-view'>
-        Some home shit or something likes thatsss
+        Hello world
       </div>
     );
   }
