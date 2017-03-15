@@ -1,6 +1,6 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import style from 'app/less/home.less';
+import style from 'app/less/home';
 
 /**
  * Base (or root) component for application
@@ -19,8 +19,8 @@ export default class Home extends React.Component {
 
   render() {
     return (
-      <div id='home-view'>
-        Hello world
+      <div id="home-view">
+        Hello world!
       </div>
     );
   }

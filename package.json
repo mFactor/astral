@@ -1,11 +1,11 @@
 {
-  "name": "basedgod",
+  "name": "Astral",
   "version": "1.0.0",
-  "description": "",
+  "description": "A minimal Node/React framework",
   "main": "server.js",
   "scripts": {
     "test": "check-dependencies --verbose",
-    "dev": "webpack --config webpack.server.js --watch --progress"
+    "dev": "NODE_ENV=development webpack --config webpack.server.js --watch --progress"
   },
   "author": "",
   "license": "ISC",
@@ -40,6 +40,7 @@
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",
     "react-router": "^3.0.2",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "winston": "^2.3.1"
   }
 }

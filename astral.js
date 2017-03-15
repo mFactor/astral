@@ -1,8 +1,8 @@
-const childProcess = require('child_process');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const server = require('./webpack.server.js');
 const client = require('./webpack.config.js');
+const config = require('./config/proc.js');
 
 const DEV_PORT = 3001;
 process.env.NODE_ENV = 'development';
@@ -12,9 +12,22 @@ process.env.NODE_ENV = 'development';
  * TODO: Set up for production
  */
 (() => {
-  if (process.env.NODE_ENV === 'development') {
-    watchServer(server);
-    watchClient(client);
+  // Set config keys to node process
+  const env = process.env.NODE_ENV;
+  Object.keys(config[env]).forEach((param) => {
+    process.env[param.toUpperCase()] = (config[env][param]);
+  });
+  switch (env) {
+    case 'development':
+      watchServer(server);
+      watchClient(client);
+      break;
+    case 'stage':
+      break;
+    case 'production':
+      break;
+    default:
+      throw new Error('You must select a build environment set as NODE_ENV');
   }
 })();
 
@@ -25,25 +38,24 @@ function watchServer(server) {
   let initServer;
   let initialLoad = true;
   const compiler = webpack(server);
-  const bundlePath = (server.output.path + '/' + server.output.filename);
+  const bundlePath = `${server.output.path}/${server.output.filename}`;
 
   // Server-side webpack handling
-  const watching = compiler.watch({
+  compiler.watch({
     aggregateTimeout: 300,
-    poll: undefined
+    poll: undefined,
   }, (err, stats) => {
     if (err) {
-      // console.log('Server bundling error has occured');
       throw new Error('Server bundling error has occured');
     }
     // clear bundle imports
     clearImportCache(bundlePath);
-
     if (!initialLoad) {
       initServer.httpServer.close(() => {
         initServer = httpInit(bundlePath);
         if (initServer) {
           initialLoad = false;
+          // Replace w/ nodeLog
           console.log(`Server bundled & restarted ${new Date()}`);
         } else {
           // server bundling error has occurred
@@ -87,7 +99,8 @@ function watchClient(client) {
   };
   // let config = require(bundlePath).config;
   const devServer = new WebpackDevServer(compiler, opts);
-  devServer.listen(DEV_PORT, 'localhost', console.log('Dev server listening on ' + DEV_PORT));
+  devServer.listen(DEV_PORT, 'localhost',
+                   console.log('Dev server listening on ' + DEV_PORT));
 }
 
 /**
@@ -110,11 +123,10 @@ function httpInit(bundlePath) {
       });
     });
   } catch (e) {
-    console.log(e);
-    return null;
+    throw new Error(e);
   }
   return { httpServer, sockets };
-};
+}
 
 function clearImportCache(bundlePath) {
   const cacheIds = Object.keys(require.cache);
@@ -124,15 +136,4 @@ function clearImportCache(bundlePath) {
       return;
     }
   }
-};
-
-/*
-child.stdout.on('data', function (data) {
-    console.log('We received a reply: ' + data);
-});
-
-
-child.stderr.on('data', function (data) {
-    console.log('There was an error: ' + data);
-});
-*/
+}

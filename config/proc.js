@@ -1,6 +1,8 @@
 /**
  * Application configuration, matches to NODE_ENV passed
  * through starting the application
+ *
+ * Each key becomes part of the env to be used throughout the application
  */
 const config = {
   name: 'Astral Demo',
@@ -18,7 +20,7 @@ const config = {
     host: 'localhost',
     port: '80',
     devPort: null,
-  }
+  },
 };
 
-export { config };
+module.exports = config;
