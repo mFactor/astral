@@ -9,9 +9,9 @@ import { renderToString } from 'react-dom/server';
 import { RouterContext, match, createMemoryHistory } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { sysLog } from './src/lib/log.js';
-import globalRoutes from './src/routes.jsx';
-import globalReducers from './src/reducers.jsx';
+import { sysLog } from './src/lib/log';
+import routes from './src/routes.jsx';
+import rootReducers from './src/reducers.jsx';
 import IsoStyle from './src/base/components/iso_style.jsx';
 import * as middleware from './src/middleware';
 import * as controller from './src/controller';
@@ -43,17 +43,17 @@ app.use((req, res) => {
   const history = createMemoryHistory(req.path);
   const routerParams = {
     history,
-    routes: globalRoutes,
+    routes,
     location: req.url,
   };
   const css = [];
   const storeState = {};
-  const store = createStore(globalReducers, storeState);
+  const store = createStore(rootReducers, storeState);
 
   // React route matching, server side rendering
   match(routerParams, (err, redirectLocation, renderProps) => {
     if (err) {
-      sysLog.error(err);
+      // sysLog.error(err);
       if (env.NODE_ENV === 'development') {
         throw new Error('Internal server error');
       }

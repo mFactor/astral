@@ -1,5 +1,6 @@
 const { resolve, join } = require('path');
 const webpack = require('webpack');
+
 const devUrl = 'http://localhost:3001';
 
 /**
@@ -21,13 +22,13 @@ module.exports = {
   output: {
     filename: 'render.bundle.js',
     path: resolve(__dirname, './dist/static'),
-    publicPath: devUrl + '/'
+    publicPath: devUrl + '/',
   },
   context: resolve(__dirname, './src'),
   resolve: {
     modules: [
       resolve('./src'),
-      resolve('./node_modules')
+      resolve('./node_modules'),
     ],
     extensions: ['.jsx', '.js', '.json', '.less'],
   },
@@ -48,7 +49,7 @@ module.exports = {
             loader: 'babel-loader',
             options: {
               presets: ['es2015', 'react', 'stage-0', 'react-hmre'],
-              plugins: ['transform-decorators-legacy'],
+              plugins: ['transform-decorators-legacy', 'transform-runtime'],
             },
           },
         ],
@@ -63,21 +64,21 @@ module.exports = {
             loader: 'babel-loader',
             options: {
               presets: ['es2015', 'react', 'stage-0', 'react-hmre'],
-              plugins: ['transform-decorators-legacy'],
+              plugins: ['transform-decorators-legacy', 'transform-runtime'],
             },
           },
         ],
       },
       {
         test: /\.json$/,
-        use: 'json-loader'
+        use: 'json-loader',
       },
       {
         test: /\.less$/,
         use: [
           'isomorphic-style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
-          'less-loader'
+          'less-loader',
         ],
       },
     ],

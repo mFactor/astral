@@ -12,7 +12,7 @@ module.exports = {
   },
   // devtool: 'cheap-eval-source-map',
   entry: [
-    './server.js'
+    './server.js',
   ],
   output: {
     filename: 'server.js',
@@ -69,14 +69,14 @@ module.exports = {
       },
       {
         test: /\.node$/,
-        use: 'node-loader'
+        use: 'node-loader',
       },
       {
         test: /\.less$/,
         use: [
           'isomorphic-style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
-          'less-loader'
+          'less-loader',
         ],
       },
     ],

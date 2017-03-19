@@ -17,8 +17,7 @@ const custom = {
     data: 6,
     help: 7,
     warn: 8,
-    clientSideError: 9,
-    error: 10,
+    error: 9,
   },
   colors: {
     trace: 'magenta',
@@ -30,7 +29,6 @@ const custom = {
     data: 'grey',
     help: 'cyan',
     warn: 'yellow',
-    clientSideError: 'red',
     error: 'red',
   },
   consoleOpts: {

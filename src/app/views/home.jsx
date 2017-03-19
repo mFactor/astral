@@ -7,10 +7,6 @@ import style from 'app/less/home';
  */
 @withStyles(style)
 export default class Home extends React.Component {
-  static propTypes = {
-    children: React.PropTypes.object
-  };
-
   constructor(props) {
     super(props);
     this.state = {

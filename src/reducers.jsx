@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import appRedux from './app/reduce';
+import base from './base/reducer.jsx';
 
-const globalReducers = combineReducers({
-  appRedux,
+const rootReducer = combineReducers({
+  base,
 });
 
-export default globalReducers;
+export default rootReducer;
