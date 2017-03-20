@@ -53,10 +53,11 @@ app.use((req, res) => {
   // React route matching, server side rendering
   match(routerParams, (err, redirectLocation, renderProps) => {
     if (err) {
-      // sysLog.error(err);
+      const msg = 'Internal server error';
       if (env.NODE_ENV === 'development') {
-        throw new Error('Internal server error');
+        throw new Error(msg);
       }
+      req.__ASTRAL__.log.server(msg, 'error');
       return res.status(500).end('Internal server error');
     }
     if (!renderProps) return res.status(404).end('Not found');
@@ -88,8 +89,10 @@ app.use((req, res) => {
       `;
       return template;
     }
+    req.__ASTRAL__.log.server('Render success', 'info');
     res.send(renderView());
   });
+  req.__ASTRAL__.log.print();
 });
 
 const httpServer = app.listen(env.PORT, () => {

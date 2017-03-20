@@ -3,9 +3,9 @@
  * Each can be imported globally through ES6 standard
  */
 import winston from 'winston';
-import fs from 'fs';
-import path from 'path';
+import { validateProp } from 'lib/libastral';
 
+// Winston log customizations
 const custom = {
   levels: {
     trace: 0,
@@ -45,54 +45,52 @@ const custom = {
   },
 };
 
-// Log stuff
-let transport;
-let opts;
-if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
-  transport = winston.transports.Console;
-  opts = custom.consoleOpts;
-}
-
-/* TODO: Needs fix to play nice with PM2
-
-else if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
-  // File-based logging in staging and production
-  const filename = path.join(__dirname, `mAutomation-${process.env.NODE_ENV}.log`);
-  try {
-    fs.unlinkSync(filename);
-    console.log('Removing old log files');
-  } catch (err) {
-    console.log('Creating new log files');
-  }
-  transport = winston.transports.File;
-  opts = custom.fileOpts;
-  opts.filename = filename;
-} else {
-  // Kill app if not definied
-  const e = 'NODE_ENV is not defined. Please define to support logs.';
-  throw e;
-}
-*/
-
-// Node JS system log
+// Node system log
 const sysLog = new winston.Logger({
   level: 'error',
   levels: custom.levels,
   transports: [
-    new (transport)(opts),
+    new (winston.transports.Console)(custom.consoleOpts),
   ],
 });
 
-// Database logs
-const dbLog = new winston.Logger({
-  level: 'error',
-  levels: custom.levels,
-  transports: [
-    new (transport)(opts),
-  ],
-});
+class Log {
+  constructor(req) {
+    this.entry = {
+      timestamp: new Date().toUTCString(),
+      route: req.originalUrl,
+      level: null,
+      server: [],
+      client: [],
+    };
+  }
 
-// Color to logs
-winston.addColors(custom.colors);
+  server(msg, level) {
+    this.setLevel(level);
+    this.entry.server.push(msg);
+  }
 
-export { sysLog, dbLog };
+  client(msg, level) {
+    this.setLevel(level);
+    this.entry.client.push(msg);
+  }
+
+  print() {
+    sysLog[this.entry.level](this.entry);
+  }
+
+  /**
+   * Set log level, most critical log level persists for printing
+   */
+  setLevel(level) {
+    if (!validateProp(custom.levels, level)) {
+      this.entry.server.push(`Supplied level is invalid, setting to warn`);
+      level = 'warn';
+    }
+    if (!this.entry.level || (custom[this.entry.level] < custom[level])) {
+      this.entry.level = level;
+    }
+  }
+}
+
+export { sysLog, Log };
