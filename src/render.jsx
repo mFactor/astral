@@ -10,12 +10,13 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 import routes from './routes.jsx';
 import rootReducer from './reducers.jsx';
-import rootSaga from './saga.jsx';
+import rootSaga from './sagas.jsx';
 import IsoStyle from './base/components/iso_style.jsx';
 
-// Load client modules
+/**
+ * Load client modules, hyrdrate initial server store
+ */
 const moduleLoad = (routes) => {
-  // Hydrate redux store from server
   const rootState = window.__ROOT_STATE__;
   const sagaMiddleware = createSagaMiddleware();
   const store = createStore(rootReducer, rootState,

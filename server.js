@@ -13,8 +13,8 @@ import { sysLog } from './src/lib/log';
 import routes from './src/routes.jsx';
 import rootReducers from './src/reducers.jsx';
 import IsoStyle from './src/base/components/iso_style.jsx';
-import * as middleware from './src/middleware';
-import * as controller from './src/controller';
+import * as middleware from './src/middlewares';
+import * as controller from './src/controllers';
 
 const env = process.env;
 const app = express();

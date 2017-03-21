@@ -1,10 +1,7 @@
 .DS_Store
 node_modules/
 bower_components/
-dist/*
-!dist/static/img/*
-!dist/static/fonts/*
-!dist/static/site.html
+dist/server.js
 npm-debug.log
 *.swp
 */*.swp
