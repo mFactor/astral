@@ -25,6 +25,8 @@ $ npm install
 
 $ npm run dev
 
+* Note, that the application is located in config/proc.js
+
 Your application will now be available at http://localhost:3000
 The webpack dev server runs on :3001
 
@@ -34,6 +36,13 @@ reloading through webpack occurs with no interference, as well as
 recompiling of any backend components necessary. Once in development,
 no interaction with the command line should be needed to restart the
 application unless a critical error occurs.
+
+## Semantics
+1. Namespace -- To prevent object namespace collisions with other modules,
+the configuraton variable NAMESPACE is defined. For example, this is used to
+attach variables to the request object in express. See base middleware
+for the usage example.
+
 
 ## Structure
 The application is designed to accomodate (to a certain point) any folder

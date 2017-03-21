@@ -3,9 +3,9 @@ import { Log } from 'lib/log';
 /**
  * Base middleware
  */
-const base = (app) => {
+const base = (app, env) => {
   app.use((req, res, next) => {
-    req.__ASTRAL__ = {
+    req[env.NAMESPACE] = {
       log: new Log(req),
     };
     next();

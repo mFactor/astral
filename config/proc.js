@@ -6,6 +6,7 @@
  */
 const config = {
   name: 'Astral Demo',
+  namespace: '__ASTRAL__',
   development: {
     host: 'localhost',
     port: '3000',

@@ -29,12 +29,12 @@ app.use(express.static(join(__dirname, 'static')));
 /**
  * Middleware registration
  */
-middleware.base(app);
+middleware.base(app, env);
 
 /**
  * API routing
  */
-controller.base(app);
+controller.base(app, env);
 
 /**
  * Isomorphic react routing
@@ -57,7 +57,7 @@ app.use((req, res) => {
       if (env.NODE_ENV === 'development') {
         throw new Error(msg);
       }
-      req.__ASTRAL__.log.server(msg, 'error');
+      req[env.NAMESPACE].log.server(msg, 'error');
       return res.status(500).end('Internal server error');
     }
     if (!renderProps) return res.status(404).end('Not found');
@@ -89,10 +89,10 @@ app.use((req, res) => {
       `;
       return template;
     }
-    req.__ASTRAL__.log.server('Render success', 'info');
+    req[env.NAMESPACE].log.server('Render success', 'info');
     res.send(renderView());
   });
-  req.__ASTRAL__.log.print();
+  req[env.NAMESPACE].log.print();
 });
 
 const httpServer = app.listen(env.PORT, () => {

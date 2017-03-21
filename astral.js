@@ -4,7 +4,6 @@ const server = require('./webpack.server.js');
 const client = require('./webpack.config.js');
 const config = require('./config/proc.js');
 
-const DEV_PORT = 3001;
 process.env.NODE_ENV = 'development';
 
 /**
@@ -13,10 +12,14 @@ process.env.NODE_ENV = 'development';
  */
 (() => {
   // Set config keys to node process
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'development';
+  }
   const env = process.env.NODE_ENV;
   Object.keys(config[env]).forEach((param) => {
     process.env[param.toUpperCase()] = (config[env][param]);
   });
+  process.env.NAMESPACE = config.namespace;
   switch (env) {
     case 'development':
       watchServer(server);
@@ -99,8 +102,8 @@ function watchClient(client) {
   };
   // let config = require(bundlePath).config;
   const devServer = new WebpackDevServer(compiler, opts);
-  devServer.listen(DEV_PORT, 'localhost',
-                   console.log('Dev server listening on ' + DEV_PORT));
+  devServer.listen(process.env.DEVPORT, 'localhost',
+                   console.log(`Dev server started...`));
 }
 
 /**
@@ -109,14 +112,14 @@ function watchClient(client) {
 function httpInit(bundlePath) {
   let httpServer;
   const sockets = new Map();
-  let nextSocket = 0;
+  const nextSocket = 0;
   try {
     // import http server
     httpServer = require(bundlePath).httpServer;
 
     // Shutdown httpServer
     httpServer.on('connection', (socket) => {
-      const socketId = nextSocket++;
+      const socketId = nextSocket + 1;
       sockets.set(socketId, socket);
       socket.on('close', () => {
         sockets.delete(socketId);
@@ -130,10 +133,10 @@ function httpInit(bundlePath) {
 
 function clearImportCache(bundlePath) {
   const cacheIds = Object.keys(require.cache);
-  for (const id of cacheIds) {
+  cacheIds.forEach((id) => {
     if (id === bundlePath) {
       delete require.cache[id];
-      return;
+      // return; <- might not be necessary, testing
     }
-  }
+  });
 }
