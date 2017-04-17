@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
-import Home from 'app/views/home.jsx'
+import Home from 'app/views/home.jsx';
 
 /**
  * Module router

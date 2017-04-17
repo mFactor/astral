@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { log } from 'base/action.jsx';
+import style from 'base/less/base';
 
-const mapStateToProps = (state) => {
-  return {
-
-  };
-};
+const mapStateToProps = (state) => ({
+});
 
 const mapDispatchToProps = (dispatch) => ({
   log: (msg, level) => {
@@ -17,6 +16,7 @@ const mapDispatchToProps = (dispatch) => ({
 /**
  * Base (or root) component for application
  */
+@withStyles(style)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Base extends React.Component {
   static propTypes = {
@@ -37,7 +37,7 @@ export default class Base extends React.Component {
 
   render() {
     return (
-      <div id="base-view">
+      <div>
         {this.props.children}
       </div>
     );

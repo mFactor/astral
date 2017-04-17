@@ -24,7 +24,7 @@ module.exports = {
     modules: [
       resolve('./src'),
     ],
-    extensions: ['.js', '.jsx', '.json', '.node', '.less'],
+    extensions: ['.js', '.jsx', '.json', '.node', '.less', '.scss'],
   },
   // watch: true,
   plugins: [
@@ -38,13 +38,12 @@ module.exports = {
       {
         test: /\.js?/,
         exclude: /node_modules/,
-        // include: [resolve(__dirname, './src')],
         use: [
           {
             loader: 'babel-loader',
             options: {
               presets: [['es2015', { modules: false }], 'react', 'stage-0'],
-              plugins: ['transform-decorators-legacy'],
+              plugins: ['transform-decorators-legacy', 'transform-runtime'],
             },
           },
         ],
@@ -52,13 +51,12 @@ module.exports = {
       {
         test: /\.jsx?/,
         exclude: /node_modules/,
-        include: [resolve(__dirname, './src')],
         use: [
           {
             loader: 'babel-loader',
             options: {
               presets: [['es2015', { modules: false }], 'react', 'stage-0'],
-              plugins: ['transform-decorators-legacy'],
+              plugins: ['transform-decorators-legacy', 'transform-runtime'],
             },
           },
         ],
@@ -77,6 +75,14 @@ module.exports = {
           'isomorphic-style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
           'less-loader',
+        ],
+      },
+      {
+        test: /\.scss$/,
+        loaders: [
+          'isomorphic-style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader',
         ],
       },
     ],

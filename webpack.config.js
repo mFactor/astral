@@ -13,16 +13,14 @@ module.exports = {
   target: 'web',
   // devtool: 'cheap-eval-source-map',
   entry: [
-    // 'react-hot-loader/patch',
-    // 'webpack-hot-middleware/client?dynamicPublicPath=true&' + devUrl,
-    'webpack-dev-server/client?' + devUrl,
+    `webpack-dev-server/client?${devUrl}`,
     'webpack/hot/only-dev-server',
     './render.jsx',
   ],
   output: {
     filename: 'render.bundle.js',
     path: resolve(__dirname, './dist/static'),
-    publicPath: devUrl + '/',
+    publicPath: `${devUrl}/`,
   },
   context: resolve(__dirname, './src'),
   resolve: {
@@ -30,11 +28,11 @@ module.exports = {
       resolve('./src'),
       resolve('./node_modules'),
     ],
-    extensions: ['.jsx', '.js', '.json', '.less'],
+    extensions: ['.jsx', '.js', '.json', '.less', '.scss'],
   },
   plugins: [
-    //new webpack.ContextReplacementPlugin(/load-runner/, /^\.\//),
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
     // new webpack.optimize.AggressiveMergingPlugin(),
   ],
   module: {
@@ -42,10 +40,8 @@ module.exports = {
       {
         test: /\.js?/,
         exclude: /node_modules/,
-        // include: [resolve(__dirname, '../src')],
         use: [
           {
-            // enforce: 'pre',
             loader: 'babel-loader',
             options: {
               presets: ['es2015', 'react', 'stage-0', 'react-hmre'],
@@ -57,10 +53,8 @@ module.exports = {
       {
         test: /\.jsx?/,
         exclude: /node_modules/,
-        // include: [resolve(__dirname, '../src')],
         use: [
           {
-            // enforce: 'pre',
             loader: 'babel-loader',
             options: {
               presets: ['es2015', 'react', 'stage-0', 'react-hmre'],
@@ -79,6 +73,14 @@ module.exports = {
           'isomorphic-style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
           'less-loader',
+        ],
+      },
+      {
+        test: /\.css$/,
+        loaders: [
+          'style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader',
         ],
       },
     ],

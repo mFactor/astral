@@ -3,6 +3,8 @@ import { call, put } from 'redux-saga/effects';
 
 /**
  * Fetch primitive for use in sagas, only for internal API
+ * @param {string} url - URL to fetch
+ * @param {Object} body - Body parameters (for POST only)
  *
  * If body is supplied, request type becomes POST
  */
