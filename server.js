@@ -12,6 +12,7 @@ import { RouterContext, match, createMemoryHistory } from 'react-router';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import SocketIO from 'socket.io';
+import config from './config/proc';
 import { sysLog } from './src/lib/log';
 import routes from './src/routes.jsx';
 import rootReducer from './src/reducers.jsx';
@@ -19,7 +20,9 @@ import IsoStyle from './src/base/components/iso_style.jsx';
 import * as middleware from './src/middlewares';
 import * as controller from './src/controllers';
 
-const env = process.env;
+// Set environment variables, propogate
+const env = config.setProcKeys();
+
 const app = express();
 app.use(session({
   secret: 'beastmode',
@@ -109,7 +112,7 @@ app.use((req, res) => {
       `;
       return template;
     }
-    req[env.NAMESPACE].log.server('Render success', 'info');
+    req[env.NAMESPACE].log.server('info', 'Render success');
     res.send(renderView());
   });
   req[env.NAMESPACE].log.print();

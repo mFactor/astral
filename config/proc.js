@@ -3,6 +3,7 @@
  * through starting the application
  *
  * Each key becomes part of the env to be used throughout the application
+ * The webpack development port is set at 3001, see astral.js for more info
  */
 const config = {
   name: 'Astral Demo',
@@ -10,18 +11,23 @@ const config = {
   development: {
     host: 'localhost',
     port: '3000',
-    devPort: '3001',
   },
   staging: {
     host: 'localhost',
     port: '3002',
-    devPort: null,
   },
   production: {
     host: 'localhost',
-    port: '80',
-    devPort: null,
+    port: '8089',
+  },
+  setProcKeys() {
+    const env = process.env.NODE_ENV;
+    Object.keys(this[env]).forEach((param) => {
+      process.env[param.toUpperCase()] = (this[env][param]);
+    });
+    process.env.NAMESPACE = this.namespace;
+    return process.env;
   },
 };
 
-module.exports = config;
+export default config;

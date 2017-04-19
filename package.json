@@ -4,7 +4,9 @@
   "description": "An isomorphic web application framework focused on minimalism and performance.",
   "main": "server.js",
   "scripts": {
-    "dev": "NODE_ENV=development webpack --config webpack.server.js --watch --progress"
+    "dev": "NODE_ENV=development node astral.js",
+    "build_prod": "NODE_ENV=production node astral.js",
+    "deploy_prod": "NODE_ENV=production node dist/server.js"
   },
   "author": "Greg Perrin",
   "license": "ISC",
