@@ -48,7 +48,7 @@ function watchServer(server) {
   compiler.watch({
     aggregateTimeout: 300,
     poll: undefined,
-  }, (err, stats) => {
+  }, (err) => {
     if (err) {
       throw new Error('Server bundling error has occured');
     }
@@ -59,7 +59,7 @@ function watchServer(server) {
         initServer = httpInit(bundlePath);
         if (initServer) {
           initialLoad = false;
-          // Replace w/ nodeLog
+          // eslint-disable-next-line
           console.log(`Server bundled & restarted ${new Date()}`);
         } else {
           // server bundling error has occurred
@@ -67,15 +67,16 @@ function watchServer(server) {
         }
       });
 
-      // Destroy all open sockets
-      for (const socket of initServer.sockets.values()) {
+      // Destroy all open socket
+      initServer.sockets.forEach((socket) => {
         socket.destroy();
-      }
+      });
     } else {
       initServer = httpInit(bundlePath);
 
       if (initServer) {
         initialLoad = false;
+        // eslint-disable-next-line
         console.log('Server bundled successfully');
       } else {
         // server bundling error has occurred
@@ -116,7 +117,7 @@ function buildServer(server) {
   const compiler = webpack(server);
 
   // Server-side webpack handling
-  compiler.run((err, stats) => {
+  compiler.run((err) => {
     if (err) {
       throw new Error('Server bundling error has occured');
     }
@@ -129,7 +130,7 @@ function buildServer(server) {
  */
 function buildClient(client) {
   const compiler = webpack(client);
-  compiler.run((err, stats) => {
+  compiler.run((err) => {
     if (err) {
       throw new Error('Client bundling error has occured');
     }
@@ -146,6 +147,7 @@ function httpInit(bundlePath) {
   const nextSocket = 0;
   try {
     // import http server
+    // eslint-disable-next-line
     httpServer = require(bundlePath).httpServer;
 
     // Shutdown httpServer
@@ -164,10 +166,11 @@ function httpInit(bundlePath) {
 
 function clearImportCache(bundlePath) {
   const cacheIds = Object.keys(require.cache);
-  cacheIds.forEach((id) => {
+  cacheIds.some((id) => {
     if (id === bundlePath) {
       delete require.cache[id];
-      // return; <- might not be necessary, testing
+      return true;
     }
+    return false;
   });
 }

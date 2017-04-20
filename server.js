@@ -4,6 +4,7 @@
  */
 import express from 'express';
 import session from 'express-session';
+import redisSession from 'connect-redis';
 import parser from 'body-parser';
 import React from 'react';
 import { join } from 'path';
@@ -20,28 +21,35 @@ import IsoStyle from './src/base/components/iso_style.jsx';
 import * as middleware from './src/middlewares';
 import * as controller from './src/controllers';
 
-// Set environment variables, propogate
 const env = config.setProcKeys();
-
 const app = express();
+const RedisStore = redisSession(session);
+
 app.use(session({
+  store: new RedisStore({
+    host: 'localhost',
+    port: 6379,
+    db: parseInt(env.SESSIONDB, 10),
+    logErrors: true,
+  }),
   secret: 'beastmode',
   resave: false,
   saveUninitialized: true,
-}));
-app.use(parser.json()).use(parser.urlencoded({ extended: false }));
-
-const httpServer = app.listen(env.PORT, () => {
-  sysLog.info(`Astral server listening on ${env.PORT}`);
-});
-const io = new SocketIO(httpServer);
-app.use(express.static(join(__dirname, 'static')));
+})).use(parser.json({
+})).use(parser.urlencoded({
+  extended: false,
+})).use(express.static(join(__dirname, 'static')));
 
 /**
  * Service initialization
  * Note: Use Promise Async/Await pattern to ensure all services
  *       are initialized before proceeding
  */
+const httpServer = app.listen(env.PORT, () => {
+  sysLog.info(`Astral server listening on ${env.PORT}`);
+});
+
+const io = new SocketIO(httpServer);
 
 /**
  * Middleware registration
@@ -64,7 +72,7 @@ app.use((req, res) => {
     location: req.url,
   };
 
-  // Isomorphic CSS loading
+  // Isomorphic CSS loading struct
   const css = [];
 
   // Initial store state
@@ -98,7 +106,7 @@ app.use((req, res) => {
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="IE=edge">
-          <title>Astral | Demo</title>
+          <title>${env.NAME}</title>
           <script>
             window.__ROOT_STATE__ = ${rootState};
           </script>
@@ -106,7 +114,7 @@ app.use((req, res) => {
         </head>
         <body>
           <div id="app-entry">${rootComponent}</div>
-          <script src="http://localhost:3001/render.bundle.js"></script>
+          <script src="${env.BUNDLEPATH}/render.bundle.js"></script>
         </body>
       </html>
       `;
@@ -118,4 +126,6 @@ app.use((req, res) => {
   req[env.NAMESPACE].log.print();
 });
 
+// Export default does not function correctly here
+// eslint-disable-next-line
 export { httpServer };
